@@ -3,9 +3,9 @@ import { useNavigate, Link } from 'react-router-dom';
 import { register } from '../api/auth';
 
 export default function RegisterPage() {
-  const [name, setName] = useState('User Normal');
-  const [email, setEmail] = useState('user@example.com');
-  const [password, setPassword] = useState('1234567');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [msg, setMsg] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);

@@ -3,9 +3,9 @@ import { checkout } from '../api/orders';
 import { useNavigate } from 'react-router-dom';
 
 export default function CheckoutPage() {
-  const [shippingName, setShippingName] = useState('Nguyễn Văn A');
-  const [shippingPhone, setShippingPhone] = useState('0901234567');
-  const [shippingAddress, setShippingAddress] = useState('123 Lê Lợi, Đà Nẵng');
+  const [shippingName, setShippingName] = useState('');
+  const [shippingPhone, setShippingPhone] = useState('');
+  const [shippingAddress, setShippingAddress] = useState('');
   const [msg, setMsg] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);

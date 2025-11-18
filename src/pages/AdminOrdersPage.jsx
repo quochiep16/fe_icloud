@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { getAllOrders, updateOrderStatus } from '../api/orders';
 
 const STATUS_OPTIONS = ['PENDING', 'PAID', 'COMPLETED', 'CANCELLED'];
@@ -70,6 +71,7 @@ export default function AdminOrdersPage({ user }) {
               <th>Tổng tiền</th>
               <th>Trạng thái</th>
               <th>Ngày tạo</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -114,11 +116,18 @@ export default function AdminOrdersPage({ user }) {
                   </div>
                 </td>
                 <td>{new Date(o.createdAt).toLocaleString()}</td>
+                <td>
+                  <Link to={`/admin/orders/${o.id}`}>
+                    <button className="btn btn-secondary">
+                      Xem chi tiết
+                    </button>
+                  </Link>
+                </td>
               </tr>
             ))}
             {orders.length === 0 && !loading && (
               <tr>
-                <td colSpan={6}>Chưa có đơn hàng nào.</td>
+                <td colSpan={7}>Chưa có đơn hàng nào.</td>
               </tr>
             )}
           </tbody>

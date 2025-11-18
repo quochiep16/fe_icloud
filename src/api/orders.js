@@ -10,7 +10,11 @@ export async function getMyOrders() {
   return res.data;
 }
 
-// 👇 thêm cho ADMIN
+export async function getMyOrderDetail(id) {
+  const res = await http.get(`/orders/me/${id}`);
+  return res.data;
+}
+
 export async function getAllOrders() {
   const res = await http.get('/orders');
   return res.data;
@@ -18,5 +22,10 @@ export async function getAllOrders() {
 
 export async function updateOrderStatus(id, status) {
   const res = await http.patch(`/orders/${id}/status`, { status });
+  return res.data;
+}
+
+export async function getOrderDetailAdmin(id) {
+  const res = await http.get(`/orders/${id}`);
   return res.data;
 }

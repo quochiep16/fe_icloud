@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { login } from '../api/auth';
 
 export default function LoginPage({ setUser }) {
-  const [email, setEmail] = useState('hiep1@example.com');
-  const [password, setPassword] = useState('1234567');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 

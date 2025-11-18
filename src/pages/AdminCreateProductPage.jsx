@@ -3,10 +3,10 @@ import { createProduct } from '../api/products';
 import { useNavigate } from 'react-router-dom';
 
 export default function AdminCreateProductPage({ user }) {
-  const [name, setName] = useState('Áo thun trắng');
-  const [description, setDescription] = useState('Áo thun cotton 100% thoáng mát');
-  const [price, setPrice] = useState('120000');
-  const [stock, setStock] = useState('10');
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [price, setPrice] = useState('');
+  const [stock, setStock] = useState('');
   const [imageFile, setImageFile] = useState(null);
   const [msg, setMsg] = useState('');
   const [error, setError] = useState('');

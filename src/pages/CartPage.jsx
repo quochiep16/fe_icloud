@@ -23,30 +23,39 @@ export default function CartPage() {
   const handleQuantityChange = async (itemId, quantity) => {
     try {
       await updateCartItem(itemId, { quantity });
+      setMsg('');
       fetchCart();
     } catch (err) {
       console.error(err);
-      setMsg('Cập nhật số lượng thất bại');
+      const backendMessage = err?.response?.data?.message;
+      setMsg(backendMessage || 'Cập nhật số lượng thất bại');
+      // reload lại để input quay về giá trị hợp lệ trên server
+      fetchCart();
     }
   };
 
   const handleSelectedChange = async (itemId, selected) => {
     try {
       await updateCartItem(itemId, { selected });
+      setMsg('');
       fetchCart();
     } catch (err) {
       console.error(err);
-      setMsg('Cập nhật chọn thanh toán thất bại');
+      const backendMessage = err?.response?.data?.message;
+      setMsg(backendMessage || 'Cập nhật chọn thanh toán thất bại');
+      fetchCart();
     }
   };
 
   const handleDelete = async (itemId) => {
     try {
       await deleteCartItem(itemId);
+      setMsg('');
       fetchCart();
     } catch (err) {
       console.error(err);
-      setMsg('Xoá thất bại');
+      const backendMessage = err?.response?.data?.message;
+      setMsg(backendMessage || 'Xoá thất bại');
     }
   };
 

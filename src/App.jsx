@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import AdminOrderDetailPage from './pages/AdminOrderDetailPage';
 
 import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -101,6 +102,16 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
+
+            <Route
+              path="/admin/orders/:id"
+              element={
+                <ProtectedRoute user={user}>
+                  <AdminOrderDetailPage user={user} />
+                </ProtectedRoute>
+              }
+            />
+
 
             <Route path="*" element={<p>404 - Không tìm thấy trang</p>} />
           </Routes>
