@@ -1,4 +1,5 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+
 
 export default function Navbar({ user, setUser }) {
   const navigate = useNavigate();
@@ -10,22 +11,46 @@ export default function Navbar({ user, setUser }) {
     navigate('/login');
   };
 
+  const navLinkClass = ({ isActive }) =>
+    isActive ? 'nav-link nav-link-active' : 'nav-link';
+
   return (
     <header className="navbar">
       <div className="navbar-left">
         <span className="navbar-brand">Mini Shop</span>
-        <Link className="nav-link" to="/products">Sản phẩm</Link>
-        <Link className="nav-link" to="/cart">Giỏ hàng</Link>
-        <Link className="nav-link" to="/orders/me">Đơn hàng</Link>
+
+        <NavLink className={navLinkClass} to="/products">
+          Sản phẩm
+        </NavLink>
+
+        <NavLink className={navLinkClass} to="/cart">
+          Giỏ hàng
+        </NavLink>
+
+        <NavLink className={navLinkClass} to="/orders/me">
+          Đơn hàng
+        </NavLink>
 
         {user?.role === 'ADMIN' && (
-        <>
-            <Link className="nav-link" to="/admin/products/new">+ Thêm sản phẩm</Link>
-            <Link className="nav-link" to="/admin/users">Quản lý user</Link>
-            <Link className="nav-link" to="/admin/orders">Quản lý đơn hàng</Link>
-        </>
-        )}
+          <>
+            <NavLink className={navLinkClass} to="/admin/products">
+              Quản lý sản phẩm
+            </NavLink>
 
+            <NavLink className={navLinkClass} to="/admin/users">
+              Quản lý user
+            </NavLink>
+
+            <NavLink className={navLinkClass} to="/admin/orders">
+              Quản lý đơn hàng
+            </NavLink>
+
+            <NavLink className={navLinkClass} to="/admin/revenue">
+              Doanh thu
+            </NavLink>
+
+          </>
+        )}
       </div>
 
       <div className="navbar-right">
@@ -41,8 +66,12 @@ export default function Navbar({ user, setUser }) {
           </>
         ) : (
           <>
-            <Link className="nav-link" to="/login">Đăng nhập</Link>
-            <Link className="nav-link" to="/register">Đăng ký</Link>
+            <NavLink className={navLinkClass} to="/login">
+              Đăng nhập
+            </NavLink>
+            <NavLink className={navLinkClass} to="/register">
+              Đăng ký
+            </NavLink>
           </>
         )}
       </div>

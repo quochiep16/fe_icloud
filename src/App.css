@@ -40,3 +40,9 @@
 .read-the-docs {
   color: #888;
 }
+
+.nav-link-active {
+  font-weight: 600;
+  border-bottom: 2px solid #e9da09; /* hoặc màu bạn thích */
+}
+

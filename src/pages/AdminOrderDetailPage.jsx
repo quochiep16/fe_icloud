@@ -1,118 +1,153 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { getProductDetail } from '../api/products';
-import { addToCart } from '../api/cart';
+import { useParams, Link } from 'react-router-dom';
+import { getOrderDetailAdmin } from '../api/orders';
 
-export default function ProductDetailPage({ user }) {
+export default function AdminOrderDetailPage({ user }) {
   const { id } = useParams();
-  const [product, setProduct] = useState(null);
-  const [msg, setMsg] = useState('');
+  const [order, setOrder] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const fetchProduct = async () => {
+  if (!user || user.role !== 'ADMIN') {
+    return <p>Không có quyền truy cập trang này</p>;
+  }
+
+  const fetchOrder = async () => {
     setLoading(true);
-    setMsg('');
     setError('');
     try {
-      const data = await getProductDetail(id);
-      setProduct(data);
+      const data = await getOrderDetailAdmin(id);
+      setOrder(data);
     } catch (err) {
       console.error(err);
-      setError('Không tải được thông tin sản phẩm');
+      const backendMessage = err?.response?.data?.message;
+      setError(backendMessage || 'Không tải được thông tin đơn hàng');
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchProduct();
+    fetchOrder();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  const handleAddToCart = async () => {
-    if (!user) {
-      setMsg('Bạn cần đăng nhập để thêm vào giỏ hàng');
-      return;
-    }
-    if (!product) return;
-
-    if (product.stock <= 0) {
-      setMsg('Sản phẩm đã hết hàng, không thể thêm vào giỏ');
-      return;
-    }
-
-    try {
-      await addToCart(product.id, 1);
-      setMsg('Đã thêm vào giỏ hàng');
-      setTimeout(() => setMsg(''), 1500);
-    } catch (err) {
-      console.error(err);
-      const backendMessage = err?.response?.data?.message;
-      setMsg(backendMessage || 'Thêm vào giỏ hàng thất bại');
-    }
-  };
-
-  if (loading || !product) {
+  if (loading || !order) {
     return (
       <div className="card">
-        {loading ? <p>Đang tải...</p> : error ? <p>{error}</p> : null}
+        {loading ? (
+          <p>Đang tải...</p>
+        ) : (
+          <p>{error || 'Không tìm thấy đơn hàng.'}</p>
+        )}
       </div>
     );
   }
 
-  const outOfStock = product.stock <= 0;
+  const totalAmount = Number(order.totalAmount);
+  const createdAtText = order.createdAt
+    ? new Date(order.createdAt).toLocaleString()
+    : '';
 
   return (
     <div className="card">
-      <div className="flex gap-8">
-        {product.imageUrl && (
-          <div>
-            <img
-              src={`http://localhost:3000${product.imageUrl}`}
-              alt={product.name}
-              style={{
-                width: 320,
-                height: 320,
-                objectFit: 'cover',
-                borderRadius: 12,
-              }}
-            />
-          </div>
-        )}
+      <div className="flex justify-between items-center">
+        <h2 className="page-title">
+          Chi tiết đơn hàng {order.code}{' '}
+          <span style={{ fontSize: 14, color: '#6b7280' }}>
+            (ID: {order.id})
+          </span>
+        </h2>
+        <Link to="/admin/orders">
+          <button className="btn btn-secondary">← Quay lại danh sách</button>
+        </Link>
+      </div>
 
-        <div style={{ flex: 1 }}>
-          <h2 className="page-title">{product.name}</h2>
-          <p className="product-price" style={{ fontSize: 20 }}>
-            {Number(product.price).toLocaleString()} đ
+      {error && <div className="alert alert-error mt-12">{error}</div>}
+
+      {/* Thông tin chung */}
+      <div className="flex gap-12 mt-12" style={{ flexWrap: 'wrap' }}>
+        <div style={{ flex: 1, minWidth: 260 }}>
+          <h3 style={{ fontWeight: 600, marginBottom: 8 }}>Thông tin người dùng</h3>
+          <p style={{ fontSize: 14 }}>
+            ID user: <b>{order.user?.id}</b>
           </p>
-
-          <p style={{ fontSize: 14, marginTop: 4, color: outOfStock ? '#b91c1c' : '#4b5563' }}>
-            {outOfStock
-              ? 'Sản phẩm hiện đã hết hàng.'
-              : `Còn ${product.stock} sản phẩm trong kho.`}
+          <p style={{ fontSize: 14 }}>
+            Email: <b>{order.user?.email}</b>
           </p>
+        </div>
 
-          <div style={{ marginTop: 12 }}>
-            <h4 style={{ fontWeight: 600, marginBottom: 4 }}>Mô tả sản phẩm</h4>
-            <p style={{ fontSize: 14, color: '#4b5563', whiteSpace: 'pre-line' }}>
-              {product.description}
-            </p>
-          </div>
+        <div style={{ flex: 1, minWidth: 260 }}>
+          <h3 style={{ fontWeight: 600, marginBottom: 8 }}>Thông tin người nhận</h3>
+          <p style={{ fontSize: 14 }}>
+            Tên: <b>{order.shippingName}</b>
+          </p>
+          <p style={{ fontSize: 14 }}>
+            SĐT: <b>{order.shippingPhone}</b>
+          </p>
+          <p style={{ fontSize: 14 }}>
+            Địa chỉ: <b>{order.shippingAddress}</b>
+          </p>
+        </div>
 
-          {msg && <div className="alert alert-success mt-12">{msg}</div>}
-          {error && <div className="alert alert-error mt-12">{error}</div>}
-
-          <button
-            className="btn btn-primary mt-12"
-            onClick={handleAddToCart}
-            disabled={outOfStock}
-            style={outOfStock ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
-          >
-            {outOfStock ? 'Hết hàng' : 'Thêm vào giỏ hàng'}
-          </button>
+        <div style={{ flex: 1, minWidth: 260 }}>
+          <h3 style={{ fontWeight: 600, marginBottom: 8 }}>Thông tin đơn hàng</h3>
+          <p style={{ fontSize: 14 }}>
+            Trạng thái:{' '}
+            <span className={`badge-status badge-status--${order.status}`}>
+              {order.status}
+            </span>
+          </p>
+          <p style={{ fontSize: 14, marginTop: 4 }}>
+            Tổng tiền:{' '}
+            <b>{totalAmount.toLocaleString()} đ</b>
+          </p>
+          <p style={{ fontSize: 14, marginTop: 4 }}>
+            Ngày tạo: <b>{createdAtText}</b>
+          </p>
         </div>
       </div>
+
+      {/* Danh sách sản phẩm trong đơn */}
+      <h3 style={{ fontWeight: 600, marginTop: 24 }}>Sản phẩm trong đơn</h3>
+
+      {(!order.items || order.items.length === 0) && (
+        <p className="mt-8">Đơn hàng này không có sản phẩm nào.</p>
+      )}
+
+      {order.items && order.items.length > 0 && (
+        <table className="table mt-8">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Sản phẩm</th>
+              <th>Đơn giá</th>
+              <th>Số lượng</th>
+              <th>Thành tiền</th>
+            </tr>
+          </thead>
+          <tbody>
+            {order.items.map((item, index) => (
+              <tr key={item.id}>
+                <td>{index + 1}</td>
+                <td>
+                  <div>
+                    <div style={{ fontWeight: 500 }}>{item.productName}</div>
+                    {item.product && (
+                      <div style={{ fontSize: 12, color: '#6b7280' }}>
+                        (ID sản phẩm: {item.product.id})
+                      </div>
+                    )}
+                  </div>
+                </td>
+                <td>{Number(item.unitPrice).toLocaleString()} đ</td>
+                <td>{item.quantity}</td>
+                <td>{Number(item.totalPrice).toLocaleString()} đ</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 }

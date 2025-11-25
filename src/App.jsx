@@ -15,21 +15,36 @@ import AdminCreateProductPage from './pages/AdminCreateProductPage';
 import AdminUsersPage from './pages/AdminUsersPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import AdminOrdersPage from './pages/AdminOrdersPage';
+import AdminRevenuePage from './pages/AdminRevenuePage';
 
+// 👇 THÊM MỚI
+import AdminProductsPage from './pages/AdminProductsPage';
+import AdminEditProductPage from './pages/AdminEditProductPage';
+
+// 👇 QUAN TRỌNG: import http để set header Authorization
+import http from './api/http';
 
 export default function App() {
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
+  // ✅ Khởi tạo user từ localStorage ngay từ lần render đầu
+  const [user, setUser] = useState(() => {
     const saved = localStorage.getItem('user');
-    if (saved) {
-      try {
-        setUser(JSON.parse(saved));
-      } catch {
-        setUser(null);
-      }
+    if (!saved) return null;
+    try {
+      return JSON.parse(saved);
+    } catch {
+      return null;
     }
-  }, []);
+  });
+
+  // ✅ Gắn accessToken vào http headers (axios) mỗi khi user thay đổi
+  useEffect(() => {
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      http.defaults.headers.common.Authorization = `Bearer ${token}`;
+    } else {
+      delete http.defaults.headers.common.Authorization;
+    }
+  }, [user]);
 
   return (
     <BrowserRouter>
@@ -43,6 +58,11 @@ export default function App() {
             <Route path="/register" element={<RegisterPage />} />
 
             <Route path="/products" element={<ProductsPage user={user} />} />
+
+            <Route
+              path="/products/:id"
+              element={<ProductDetailPage user={user} />}
+            />
 
             <Route
               path="/cart"
@@ -71,11 +91,32 @@ export default function App() {
               }
             />
 
+            {/* ADMIN - tạo sản phẩm */}
             <Route
               path="/admin/products/new"
               element={
                 <ProtectedRoute user={user}>
                   <AdminCreateProductPage user={user} />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* ADMIN - danh sách & xoá sản phẩm */}
+            <Route
+              path="/admin/products"
+              element={
+                <ProtectedRoute user={user}>
+                  <AdminProductsPage user={user} />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* ADMIN - chỉnh sửa sản phẩm */}
+            <Route
+              path="/admin/products/:id/edit"
+              element={
+                <ProtectedRoute user={user}>
+                  <AdminEditProductPage user={user} />
                 </ProtectedRoute>
               }
             />
@@ -87,11 +128,6 @@ export default function App() {
                   <AdminUsersPage user={user} />
                 </ProtectedRoute>
               }
-            />
-
-            <Route
-              path="/products/:id"
-              element={<ProductDetailPage user={user} />}
             />
 
             <Route
@@ -112,6 +148,14 @@ export default function App() {
               }
             />
 
+            <Route
+              path="/admin/revenue"
+              element={
+                <ProtectedRoute user={user}>
+                  <AdminRevenuePage user={user} />
+                </ProtectedRoute>
+              }
+            />
 
             <Route path="*" element={<p>404 - Không tìm thấy trang</p>} />
           </Routes>

@@ -22,9 +22,30 @@ export default function CheckoutPage() {
       setTimeout(() => navigate('/orders/me'), 1200);
     } catch (err) {
       console.error(err);
-      setError(
-        'Thanh toán thất bại. Hãy kiểm tra lại giỏ hàng (phải có ít nhất 1 sản phẩm được chọn).',
-      );
+
+      const res = err?.response;
+      const data = res?.data;
+      let message = 'Thanh toán thất bại. Vui lòng thử lại sau.';
+
+      // Ưu tiên đọc message từ backend
+      if (data?.message) {
+        if (Array.isArray(data.message)) {
+          // class-validator hay trả về mảng message
+          message = data.message.join('\n');
+        } else if (typeof data.message === 'string') {
+          message = data.message;
+        }
+      } else if (typeof data === 'string') {
+        // phòng trường hợp BE trả body là string thuần
+        message = data;
+      }
+
+      // Một số case đặc biệt
+      if (res?.status === 401) {
+        message = 'Bạn cần đăng nhập lại trước khi thanh toán.';
+      }
+
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -40,7 +61,14 @@ export default function CheckoutPage() {
         </p>
 
         {msg && <div className="alert alert-success mt-12">{msg}</div>}
-        {error && <div className="alert alert-error mt-12">{error}</div>}
+        {error && (
+          <div
+            className="alert alert-error mt-12"
+            style={{ whiteSpace: 'pre-line' }} // để \n xuống dòng đẹp
+          >
+            {error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="mt-16">
           <div className="form-group">

@@ -272,3 +272,9 @@ body {
   background: #fee2e2;
   color: #991b1b;
 }
+
+.nav-link-active {
+  font-weight: 600;
+  border-bottom: 2px solid #e9da09; /* hoặc màu bạn thích */
+}
+
