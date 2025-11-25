@@ -62,7 +62,7 @@ export default function ProductDetailPage({ user }) {
         {product.imageUrl && (
           <div>
             <img
-              src={`${BACKEND_URL}${product.imageUrl}`}
+              src={`${BACKEND_URL.replace(/\/+$/, '')}${p.imageUrl}`}
               alt={product.name}
               style={{
                 width: 320,

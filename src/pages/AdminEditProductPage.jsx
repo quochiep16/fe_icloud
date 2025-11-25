@@ -144,7 +144,7 @@ export default function AdminEditProductPage({ user }) {
               <div style={{ marginBottom: 8 }}>
                 <p style={{ fontSize: 13, marginBottom: 4 }}>Ảnh hiện tại:</p>
                 <img
-                  src={`http://localhost:3000${currentImageUrl}`}
+                  src={`${BACKEND_URL.replace(/\/+$/, '')}${p.imageUrl}`}
                   alt={name}
                   style={{
                     width: 160,

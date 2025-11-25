@@ -101,7 +101,7 @@ export default function AdminProductsPage({ user }) {
               <div key={p.id} className="card">
                 {p.imageUrl && (
                   <img
-                    src={`${BACKEND_URL}${p.imageUrl}`}
+                    src={`${BACKEND_URL.replace(/\/+$/, '')}${p.imageUrl}`}
                     alt={p.name}
                     className="product-card-img"
                   />
