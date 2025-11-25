@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getProductDetail, updateProduct } from '../api/products';
+import { BACKEND_URL } from '../api/http'; // 👈 THÊM DÒNG NÀY
 
 export default function AdminEditProductPage({ user }) {
   const { id } = useParams();
@@ -144,7 +145,7 @@ export default function AdminEditProductPage({ user }) {
               <div style={{ marginBottom: 8 }}>
                 <p style={{ fontSize: 13, marginBottom: 4 }}>Ảnh hiện tại:</p>
                 <img
-                  src={`${BACKEND_URL.replace(/\/+$/, '')}${p.imageUrl}`}
+                  src={`${BACKEND_URL.replace(/\/+$/, '')}${currentImageUrl}`}
                   alt={name}
                   style={{
                     width: 160,
