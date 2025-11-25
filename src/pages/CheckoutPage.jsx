@@ -17,7 +17,11 @@ export default function CheckoutPage() {
     setError('');
     setLoading(true);
     try {
-      const order = await checkout({ shippingName, shippingPhone, shippingAddress });
+      const order = await checkout({
+        shippingName,
+        shippingPhone,
+        shippingAddress,
+      });
       setMsg(`Tạo đơn hàng thành công: ${order.code}`);
       setTimeout(() => navigate('/orders/me'), 1200);
     } catch (err) {
@@ -27,20 +31,16 @@ export default function CheckoutPage() {
       const data = res?.data;
       let message = 'Thanh toán thất bại. Vui lòng thử lại sau.';
 
-      // Ưu tiên đọc message từ backend
       if (data?.message) {
         if (Array.isArray(data.message)) {
-          // class-validator hay trả về mảng message
           message = data.message.join('\n');
         } else if (typeof data.message === 'string') {
           message = data.message;
         }
       } else if (typeof data === 'string') {
-        // phòng trường hợp BE trả body là string thuần
         message = data;
       }
 
-      // Một số case đặc biệt
       if (res?.status === 401) {
         message = 'Bạn cần đăng nhập lại trước khi thanh toán.';
       }
@@ -52,19 +52,21 @@ export default function CheckoutPage() {
   };
 
   return (
-    <div style={{ maxWidth: 600, margin: '0 auto' }}>
+    <div className="page-shell page-shell--narrow">
       <div className="card">
-        <h2 className="page-title">Thanh toán</h2>
+        <p className="page-eyebrow">Thanh toán</p>
+        <h2 className="page-title">Thông tin giao hàng</h2>
 
-        <p style={{ fontSize: 14, color: '#4b5563', marginTop: 4 }}>
-          Các sản phẩm bạn đã <b>chọn</b> trong giỏ hàng sẽ được tạo thành một đơn hàng mới.
+        <p className="page-description">
+          Các sản phẩm bạn đã <b>chọn</b> trong giỏ hàng sẽ được tạo thành một
+          đơn hàng mới. Vui lòng điền chính xác thông tin người nhận.
         </p>
 
         {msg && <div className="alert alert-success mt-12">{msg}</div>}
         {error && (
           <div
             className="alert alert-error mt-12"
-            style={{ whiteSpace: 'pre-line' }} // để \n xuống dòng đẹp
+            style={{ whiteSpace: 'pre-line' }}
           >
             {error}
           </div>

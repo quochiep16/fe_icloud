@@ -18,7 +18,13 @@ export default function AdminProductsPage({ user }) {
   const navigate = useNavigate();
 
   if (!user || user.role !== 'ADMIN') {
-    return <p>Bạn không có quyền truy cập trang này</p>;
+    return (
+      <div className="page-shell">
+        <div className="card">
+          <p>Bạn không có quyền truy cập trang này</p>
+        </div>
+      </div>
+    );
   }
 
   const fetchProducts = async () => {
@@ -66,10 +72,16 @@ export default function AdminProductsPage({ user }) {
   };
 
   return (
-    <div>
+    <div className="page-shell">
       <div className="card">
-        <div className="flex justify-between items-center">
-          <h2 className="page-title">Quản lý sản phẩm</h2>
+        <div className="page-header">
+          <div>
+            <p className="page-eyebrow">Admin · Sản phẩm</p>
+            <h2 className="page-title">Quản lý sản phẩm</h2>
+            <p className="page-description">
+              Xem, tìm kiếm và chỉnh sửa danh sách sản phẩm đang bán trên hệ thống.
+            </p>
+          </div>
           <button
             className="btn btn-primary"
             onClick={() => navigate('/admin/products/new')}
@@ -78,7 +90,7 @@ export default function AdminProductsPage({ user }) {
           </button>
         </div>
 
-        <form onSubmit={handleSearch} className="flex gap-8 mt-12">
+        <form onSubmit={handleSearch} className="toolbar mt-12">
           <input
             className="input"
             placeholder="Tìm kiếm sản phẩm..."
@@ -96,63 +108,68 @@ export default function AdminProductsPage({ user }) {
         {loading ? (
           <p className="mt-16">Đang tải...</p>
         ) : (
-          <div className="product-grid mt-16">
-            {products.map((p) => (
-              <div key={p.id} className="card">
-                {p.imageUrl && (
-                  <img
-                    src={`${BACKEND_URL.replace(/\/+$/, '')}${p.imageUrl}`}
-                    alt={p.name}
-                    className="product-card-img"
-                  />
-                )}
+          <>
+            <p className="table-caption">
+              Tổng: <b>{products.length}</b> sản phẩm
+            </p>
+            <div className="product-grid mt-12">
+              {products.map((p) => (
+                <div key={p.id} className="card card-product-admin">
+                  {p.imageUrl && (
+                    <img
+                      src={`${BACKEND_URL.replace(/\/+$/, '')}${p.imageUrl}`}
+                      alt={p.name}
+                      className="product-card-img"
+                    />
+                  )}
 
-                <h4 className="product-name">
-                  <Link
-                    to={`/products/${p.id}`}
-                    style={{ textDecoration: 'none', color: '#111827' }}
+                  <h4 className="product-name">
+                    <Link
+                      to={`/products/${p.id}`}
+                      style={{ textDecoration: 'none', color: '#111827' }}
+                    >
+                      {p.name}
+                    </Link>
+                  </h4>
+
+                  <p
+                    style={{
+                      fontSize: 13,
+                      color: '#4b5563',
+                      marginBottom: 4,
+                      minHeight: 36,
+                    }}
                   >
-                    {p.name}
-                  </Link>
-                </h4>
+                    {shortDesc(p.description)}
+                  </p>
 
-                <p
-                  style={{
-                    fontSize: 13,
-                    color: '#4b5563',
-                    marginBottom: 4,
-                    minHeight: 36,
-                  }}
-                >
-                  {shortDesc(p.description)}
-                </p>
+                  <p className="product-price">
+                    {Number(p.price).toLocaleString()} đ
+                  </p>
 
-                <p className="product-price">
-                  {Number(p.price).toLocaleString()} đ
-                </p>
+                  <p style={{ fontSize: 13, color: '#4b5563' }}>
+                    Còn {p.stock} sản phẩm trong kho
+                  </p>
 
-                <p style={{ fontSize: 13, color: '#4b5563' }}>
-                  Còn {p.stock} sản phẩm trong kho
-                </p>
-
-                <div className="flex gap-4 mt-8">
-                  <button
-                    className="btn btn-secondary"
-                    onClick={() => handleEdit(p.id)}
-                  >
-                    Sửa
-                  </button>
-                  <button
-                    className="btn btn-error"
-                    onClick={() => handleDelete(p.id)}
-                  >
-                    Xoá
-                  </button>
+                  <div className="flex gap-4 mt-8">
+                    <button
+                      className="btn btn-secondary"
+                      onClick={() => handleEdit(p.id)}
+                    >
+                      Sửa
+                    </button>
+                    <button
+                      className="btn btn-error"
+                      onClick={() => handleDelete(p.id)}
+                    >
+                      Xoá
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
-            {products.length === 0 && <p>Không có sản phẩm nào</p>}
-          </div>
+              ))}
+              {products.length === 0 && <p>Không có sản phẩm nào</p>}
+            </div>
+          </>
         )}
       </div>
     </div>

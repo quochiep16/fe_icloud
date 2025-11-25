@@ -56,66 +56,63 @@ export default function ProductDetailPage({ user }) {
 
   if (loading || !product) {
     return (
-      <div className="card">
-        {loading ? <p>Đang tải...</p> : error ? <p>{error}</p> : null}
+      <div className="page-shell">
+        <div className="card">
+          {loading ? <p>Đang tải...</p> : error ? <p>{error}</p> : null}
+        </div>
       </div>
     );
   }
 
+  const outOfStock = product.stock <= 0;
+
   return (
-    <div className="card">
-      <div className="flex gap-8">
-        {product.imageUrl && (
-          <div>
-            <img
-              src={`${BACKEND_URL.replace(/\/+$/, '')}${product.imageUrl}`}
-              alt={product.name}
-              style={{
-                width: 320,
-                height: 320,
-                objectFit: 'cover',
-                borderRadius: 12,
-              }}
-            />
-          </div>
-        )}
+    <div className="page-shell">
+      <div className="card product-detail">
+        <div className="product-detail-layout">
+          {product.imageUrl && (
+            <div className="product-detail-image-wrap">
+              <img
+                src={`${BACKEND_URL.replace(/\/+$/, '')}${product.imageUrl}`}
+                alt={product.name}
+                className="product-detail-img"
+              />
+            </div>
+          )}
 
-        <div style={{ flex: 1 }}>
-          <h2 className="page-title">{product.name}</h2>
-          <p className="product-price" style={{ fontSize: 20 }}>
-            {Number(product.price).toLocaleString()} đ
-          </p>
+          <div className="product-detail-info">
+            <p className="page-eyebrow">Sản phẩm</p>
+            <h2 className="page-title">{product.name}</h2>
 
-          <div style={{ marginTop: 12 }}>
-            <h4 style={{ fontWeight: 600, marginBottom: 4 }}>
-              Mô tả sản phẩm
-            </h4>
-            <p
-              style={{
-                fontSize: 14,
-                color: '#4b5563',
-                whiteSpace: 'pre-line',
-              }}
+            <p className="product-price product-detail-price">
+              {Number(product.price).toLocaleString()} đ
+            </p>
+
+            <div className="product-detail-meta">
+              <span className={`chip ${outOfStock ? 'chip--out' : 'chip--in'}`}>
+                {outOfStock
+                  ? 'Hết hàng'
+                  : `Còn ${product.stock} sản phẩm trong kho`}
+              </span>
+            </div>
+
+            <div className="product-detail-description">
+              <h4>Mô tả sản phẩm</h4>
+              <p>{product.description}</p>
+            </div>
+
+            {msg && <div className="alert alert-success mt-12">{msg}</div>}
+            {error && <div className="alert alert-error mt-12">{error}</div>}
+
+            <button
+              className="btn btn-primary product-detail-buy"
+              onClick={handleAddToCart}
+              disabled={outOfStock}
+              style={outOfStock ? { opacity: 0.6, cursor: 'not-allowed' } : {}}
             >
-              {product.description}
-            </p>
+              {outOfStock ? 'Hết hàng' : 'Thêm vào giỏ hàng'}
+            </button>
           </div>
-
-          <div style={{ marginTop: 16 }}>
-            <p style={{ fontSize: 14 }}>
-              Tồn kho: <b>{product.stock}</b>
-            </p>
-          </div>
-
-          {msg && <div className="alert alert-success mt-12">{msg}</div>}
-          {error && <div className="alert alert-error mt-12">{error}</div>}
-
-          <button
-            className="btn btn-primary mt-12"
-            onClick={handleAddToCart}
-          >
-            Thêm vào giỏ hàng
-          </button>
         </div>
       </div>
     </div>

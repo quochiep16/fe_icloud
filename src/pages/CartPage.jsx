@@ -29,7 +29,6 @@ export default function CartPage() {
       console.error(err);
       const backendMessage = err?.response?.data?.message;
       setMsg(backendMessage || 'Cập nhật số lượng thất bại');
-      // reload lại để input quay về giá trị hợp lệ trên server
       fetchCart();
     }
   };
@@ -60,90 +59,117 @@ export default function CartPage() {
   };
 
   if (!cart) {
-    return <p>Đang tải giỏ hàng...</p>;
+    return (
+      <div className="page-shell">
+        <div className="card">
+          <p>Đang tải giỏ hàng...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="card">
-      <h2 className="page-title">Giỏ hàng</h2>
-      {msg && <div className="alert alert-error mt-8">{msg}</div>}
-
-      {cart.items.length === 0 ? (
-        <p className="mt-12">Giỏ hàng trống</p>
-      ) : (
-        <>
-          <table className="table mt-8">
-            <thead>
-              <tr>
-                <th>Chọn</th>
-                <th>Sản phẩm</th>
-                <th>Giá</th>
-                <th>Số lượng</th>
-                <th>Tổng</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {cart.items.map((item) => (
-                <tr key={item.id}>
-                  <td>
-                    <input
-                      type="checkbox"
-                      checked={item.selected}
-                      onChange={(e) =>
-                        handleSelectedChange(item.id, e.target.checked)
-                      }
-                    />
-                  </td>
-                  <td>{item.product.name}</td>
-                  <td>{Number(item.product.price).toLocaleString()} đ</td>
-                  <td>
-                    <input
-                      className="input"
-                      style={{ width: 70 }}
-                      type="number"
-                      min={1}
-                      value={item.quantity}
-                      onChange={(e) =>
-                        handleQuantityChange(item.id, Number(e.target.value))
-                      }
-                    />
-                  </td>
-                  <td>
-                    {(
-                      item.quantity * Number(item.product.price)
-                    ).toLocaleString()}{' '}
-                    đ
-                  </td>
-                  <td>
-                    <button
-                      className="btn btn-danger"
-                      onClick={() => handleDelete(item.id)}
-                    >
-                      Xoá
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          <div className="mt-16">
-            <p>Tổng sản phẩm: {cart.totalItems}</p>
-            <p>
-              Tổng tiền: {Number(cart.totalPrice).toLocaleString()} đ
+    <div className="page-shell">
+      <div className="card">
+        <div className="page-header">
+          <div>
+            <p className="page-eyebrow">Cửa hàng</p>
+            <h2 className="page-title">Giỏ hàng</h2>
+            <p className="page-description">
+              Quản lý các sản phẩm bạn đã thêm vào giỏ, điều chỉnh số lượng và
+              chọn sản phẩm để thanh toán.
             </p>
-            <p>
-              Tiền các sản phẩm đã chọn:{' '}
-              {Number(cart.selectedTotalPrice).toLocaleString()} đ
-            </p>
-
-            <Link to="/checkout">
-              <button className="btn btn-primary mt-12">Thanh toán</button>
-            </Link>
           </div>
-        </>
-      )}
+        </div>
+
+        {msg && <div className="alert alert-error mt-8">{msg}</div>}
+
+        {cart.items.length === 0 ? (
+          <p className="mt-12">Giỏ hàng trống</p>
+        ) : (
+          <>
+            <table className="table mt-8">
+              <thead>
+                <tr>
+                  <th>Chọn</th>
+                  <th>Sản phẩm</th>
+                  <th>Giá</th>
+                  <th>Số lượng</th>
+                  <th>Tổng</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {cart.items.map((item) => (
+                  <tr key={item.id}>
+                    <td>
+                      <input
+                        type="checkbox"
+                        checked={item.selected}
+                        onChange={(e) =>
+                          handleSelectedChange(item.id, e.target.checked)
+                        }
+                      />
+                    </td>
+                    <td>{item.product.name}</td>
+                    <td>{Number(item.product.price).toLocaleString()} đ</td>
+                    <td>
+                      <input
+                        className="input"
+                        style={{ width: 70 }}
+                        type="number"
+                        min={1}
+                        value={item.quantity}
+                        onChange={(e) =>
+                          handleQuantityChange(
+                            item.id,
+                            Number(e.target.value),
+                          )
+                        }
+                      />
+                    </td>
+                    <td>
+                      {(
+                        item.quantity * Number(item.product.price)
+                      ).toLocaleString()}{' '}
+                      đ
+                    </td>
+                    <td>
+                      <button
+                        className="btn btn-error"
+                        onClick={() => handleDelete(item.id)}
+                      >
+                        Xoá
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            <div className="cart-summary mt-16">
+              <div className="cart-summary-line">
+                <span>Tổng sản phẩm:</span>
+                <b>{cart.totalItems}</b>
+              </div>
+              <div className="cart-summary-line">
+                <span>Tổng tiền:</span>
+                <b>{Number(cart.totalPrice).toLocaleString()} đ</b>
+              </div>
+              <div className="cart-summary-line">
+                <span>Tiền các sản phẩm đã chọn:</span>
+                <b>{Number(cart.selectedTotalPrice).toLocaleString()} đ</b>
+              </div>
+
+              <Link to="/checkout">
+                <button className="btn btn-primary mt-12">
+                  Tiếp tục thanh toán
+                </button>
+              </Link>
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 }

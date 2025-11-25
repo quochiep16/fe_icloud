@@ -60,13 +60,19 @@ export default function ProductsPage({ user }) {
   };
 
   return (
-    <div>
+    <div className="page-shell">
       <div className="card">
-        <div className="flex justify-between items-center">
-          <h2 className="page-title">Danh sách sản phẩm</h2>
+        <div className="page-header">
+          <div>
+            <p className="page-eyebrow">Cửa hàng</p>
+            <h2 className="page-title">Danh sách sản phẩm</h2>
+            <p className="page-description">
+              Khám phá các sản phẩm hiện có và thêm nhanh vào giỏ hàng.
+            </p>
+          </div>
         </div>
 
-        <form onSubmit={handleSearch} className="flex gap-8 mt-12">
+        <form onSubmit={handleSearch} className="toolbar mt-12">
           <input
             className="input"
             placeholder="Tìm kiếm sản phẩm..."
@@ -83,62 +89,77 @@ export default function ProductsPage({ user }) {
         {loading ? (
           <p className="mt-16">Đang tải...</p>
         ) : (
-          <div className="product-grid mt-16">
-            {products.map((p) => {
-              const outOfStock = p.stock <= 0;
-              return (
-                <div key={p.id} className="card">
-                  {p.imageUrl && (
-                    <img
-                      src={`${BACKEND_URL.replace(/\/+$/, '')}${p.imageUrl}`}
-                      alt={p.name}
-                      className="product-card-img"
-                    />
-                  )}
+          <>
+            <p className="table-caption">
+              Tổng: <b>{products.length}</b> sản phẩm
+            </p>
+            <div className="product-grid mt-12">
+              {products.map((p) => {
+                const outOfStock = p.stock <= 0;
 
-                  <h4 className="product-name">
-                    <Link
-                      to={`/products/${p.id}`}
-                      style={{ textDecoration: 'none', color: '#111827' }}
+                return (
+                  <div key={p.id} className="card card-product">
+                    {p.imageUrl && (
+                      <img
+                        src={`${BACKEND_URL.replace(/\/+$/, '')}${p.imageUrl}`}
+                        alt={p.name}
+                        className="product-card-img"
+                      />
+                    )}
+
+                    <h4 className="product-name">
+                      <Link
+                        to={`/products/${p.id}`}
+                        style={{ textDecoration: 'none', color: '#111827' }}
+                      >
+                        {p.name}
+                      </Link>
+                    </h4>
+
+                    <p
+                      style={{
+                        fontSize: 13,
+                        color: '#4b5563',
+                        marginBottom: 4,
+                        minHeight: 36,
+                      }}
                     >
-                      {p.name}
-                    </Link>
-                  </h4>
+                      {shortDesc(p.description)}
+                    </p>
 
-                  <p
-                    style={{
-                      fontSize: 13,
-                      color: '#4b5563',
-                      marginBottom: 4,
-                      minHeight: 36,
-                    }}
-                  >
-                    {shortDesc(p.description)}
-                  </p>
+                    <p className="product-price">
+                      {Number(p.price).toLocaleString()} đ
+                    </p>
 
-                  <p className="product-price">
-                    {Number(p.price).toLocaleString()} đ
-                  </p>
+                    <p
+                      style={{
+                        fontSize: 13,
+                        color: outOfStock ? '#b91c1c' : '#4b5563',
+                      }}
+                    >
+                      {outOfStock
+                        ? 'Hết hàng'
+                        : `Còn ${p.stock} sản phẩm trong kho`}
+                    </p>
 
-                  <p style={{ fontSize: 13, color: outOfStock ? '#b91c1c' : '#4b5563' }}>
-                    {outOfStock
-                      ? 'Hết hàng'
-                      : `Còn ${p.stock} sản phẩm trong kho`}
-                  </p>
-
-                  <button
-                    className="btn btn-primary mt-8"
-                    onClick={() => handleAddToCart(p)}
-                    disabled={outOfStock}
-                    style={outOfStock ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
-                  >
-                    {outOfStock ? 'Hết hàng' : 'Thêm vào giỏ'}
-                  </button>
-                </div>
-              );
-            })}
-            {products.length === 0 && <p>Không có sản phẩm nào</p>}
-          </div>
+                    <button
+                      className="btn btn-primary mt-8"
+                      onClick={() => handleAddToCart(p)}
+                      disabled={outOfStock}
+                      style={
+                        outOfStock
+                          ? { opacity: 0.5, cursor: 'not-allowed' }
+                          : {}
+                      }
+                    >
+                      {outOfStock ? 'Hết hàng' : 'Thêm vào giỏ'}
+                    </button>
+                  </div>
+                );
+              })}
+              {products.length === 0 && <p>Không có sản phẩm nào</p>}
+            </div>
+          </>
         )}
       </div>
     </div>

@@ -6,7 +6,13 @@ export default function AdminUsersPage({ user }) {
   const [msg, setMsg] = useState('');
 
   if (!user || user.role !== 'ADMIN') {
-    return <p className="app-content">Bạn không có quyền truy cập trang này</p>;
+    return (
+      <div className="page-shell">
+        <div className="card">
+          <p>Bạn không có quyền truy cập trang này</p>
+        </div>
+      </div>
+    );
   }
 
   const fetchUsers = async () => {
@@ -52,10 +58,16 @@ export default function AdminUsersPage({ user }) {
   };
 
   return (
-    <div className="app-content">
+    <div className="page-shell">
       <div className="card">
-        <div className="flex justify-between items-center">
-          <h2 className="page-title">Quản lý user</h2>
+        <div className="page-header">
+          <div>
+            <p className="page-eyebrow">Admin · User</p>
+            <h2 className="page-title">Quản lý user</h2>
+            <p className="page-description">
+              Xem danh sách tài khoản, đổi quyền ADMIN/USER hoặc xoá user.
+            </p>
+          </div>
         </div>
 
         {msg && <div className="alert alert-success mt-8">{msg}</div>}
@@ -90,7 +102,7 @@ export default function AdminUsersPage({ user }) {
                     Đổi role
                   </button>
                   <button
-                    className="btn btn-danger"
+                    className="btn btn-error"
                     onClick={() => handleDelete(u)}
                   >
                     Xoá
