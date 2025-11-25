@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getProducts } from '../api/products';
 import { addToCart } from '../api/cart';
+import { BACKEND_URL } from '../api/http';
 
 const shortDesc = (text) => {
   if (!text) return '';
@@ -89,7 +90,7 @@ export default function ProductsPage({ user }) {
                 <div key={p.id} className="card">
                   {p.imageUrl && (
                     <img
-                      src={`http://localhost:3000${p.imageUrl}`}
+                      src={`${BACKEND_URL}${p.imageUrl}`}
                       alt={p.name}
                       className="product-card-img"
                     />

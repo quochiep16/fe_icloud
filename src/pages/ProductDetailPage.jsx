@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getProductDetail } from '../api/products';
 import { addToCart } from '../api/cart';
+import { BACKEND_URL } from '../api/http';
 
 export default function ProductDetailPage({ user }) {
   const { id } = useParams();
@@ -19,7 +20,8 @@ export default function ProductDetailPage({ user }) {
       setProduct(data);
     } catch (err) {
       console.error(err);
-      setError('Không tải được thông tin sản phẩm');
+      const backendMessage = err?.response?.data?.message;
+      setError(backendMessage || 'Không tải được thông tin sản phẩm');
     } finally {
       setLoading(false);
     }
@@ -41,7 +43,8 @@ export default function ProductDetailPage({ user }) {
       setTimeout(() => setMsg(''), 1500);
     } catch (err) {
       console.error(err);
-      setMsg('Thêm vào giỏ hàng thất bại');
+      const backendMessage = err?.response?.data?.message;
+      setMsg(backendMessage || 'Thêm vào giỏ hàng thất bại');
     }
   };
 
@@ -59,7 +62,7 @@ export default function ProductDetailPage({ user }) {
         {product.imageUrl && (
           <div>
             <img
-              src={`http://localhost:3000${product.imageUrl}`}
+              src={`${BACKEND_URL}${product.imageUrl}`}
               alt={product.name}
               style={{
                 width: 320,
@@ -78,8 +81,16 @@ export default function ProductDetailPage({ user }) {
           </p>
 
           <div style={{ marginTop: 12 }}>
-            <h4 style={{ fontWeight: 600, marginBottom: 4 }}>Mô tả sản phẩm</h4>
-            <p style={{ fontSize: 14, color: '#4b5563', whiteSpace: 'pre-line' }}>
+            <h4 style={{ fontWeight: 600, marginBottom: 4 }}>
+              Mô tả sản phẩm
+            </h4>
+            <p
+              style={{
+                fontSize: 14,
+                color: '#4b5563',
+                whiteSpace: 'pre-line',
+              }}
+            >
               {product.description}
             </p>
           </div>
