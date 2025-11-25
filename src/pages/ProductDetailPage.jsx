@@ -37,6 +37,12 @@ export default function ProductDetailPage({ user }) {
       setMsg('Bạn cần đăng nhập để thêm vào giỏ hàng');
       return;
     }
+
+    if (product.stock <= 0) {
+      setMsg('Sản phẩm đã hết hàng, không thể thêm vào giỏ');
+      return;
+    }
+
     try {
       await addToCart(product.id, 1);
       setMsg('Đã thêm vào giỏ hàng');
@@ -62,7 +68,7 @@ export default function ProductDetailPage({ user }) {
         {product.imageUrl && (
           <div>
             <img
-              src={`${BACKEND_URL.replace(/\/+$/, '')}${p.imageUrl}`}
+              src={`${BACKEND_URL.replace(/\/+$/, '')}${product.imageUrl}`}
               alt={product.name}
               style={{
                 width: 320,
