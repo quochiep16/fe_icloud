@@ -1,3 +1,4 @@
+// src/pages/ProductsPage.jsx
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getProducts } from '../api/products';
@@ -7,6 +8,13 @@ import { BACKEND_URL } from '../api/http';
 const shortDesc = (text) => {
   if (!text) return '';
   return text.length > 80 ? text.slice(0, 80) + '...' : text;
+};
+
+const buildImageUrl = (url) => {
+  if (!url) return '';
+  return url.startsWith('http')
+    ? url
+    : `${BACKEND_URL.replace(/\/+$/, '')}${url}`;
 };
 
 export default function ProductsPage({ user }) {
@@ -101,7 +109,7 @@ export default function ProductsPage({ user }) {
                   <div key={p.id} className="card card-product">
                     {p.imageUrl && (
                       <img
-                        src={`${BACKEND_URL.replace(/\/+$/, '')}${p.imageUrl}`}
+                        src={buildImageUrl(p.imageUrl)}
                         alt={p.name}
                         className="product-card-img"
                       />

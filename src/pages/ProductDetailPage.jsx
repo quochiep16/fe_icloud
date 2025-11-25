@@ -1,8 +1,16 @@
+// src/pages/ProductDetailPage.jsx
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getProductDetail } from '../api/products';
 import { addToCart } from '../api/cart';
 import { BACKEND_URL } from '../api/http';
+
+const buildImageUrl = (url) => {
+  if (!url) return '';
+  return url.startsWith('http')
+    ? url
+    : `${BACKEND_URL.replace(/\/+$/, '')}${url}`;
+};
 
 export default function ProductDetailPage({ user }) {
   const { id } = useParams();
@@ -73,7 +81,7 @@ export default function ProductDetailPage({ user }) {
           {product.imageUrl && (
             <div className="product-detail-image-wrap">
               <img
-                src={`${BACKEND_URL.replace(/\/+$/, '')}${product.imageUrl}`}
+                src={buildImageUrl(product.imageUrl)}
                 alt={product.name}
                 className="product-detail-img"
               />

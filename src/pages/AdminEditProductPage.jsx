@@ -4,6 +4,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { getProductDetail, updateProduct } from '../api/products';
 import { BACKEND_URL } from '../api/http';
 
+const buildImageUrl = (url) => {
+  if (!url) return '';
+  return url.startsWith('http')
+    ? url
+    : `${BACKEND_URL.replace(/\/+$/, '')}${url}`;
+};
+
 export default function AdminEditProductPage({ user }) {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -206,7 +213,7 @@ export default function AdminEditProductPage({ user }) {
                       Ảnh hiện tại:
                     </p>
                     <img
-                      src={`${BACKEND_URL.replace(/\/+$/, '')}${currentImageUrl}`}
+                      src={buildImageUrl(currentImageUrl)}
                       alt={name}
                       style={{
                         width: '100%',

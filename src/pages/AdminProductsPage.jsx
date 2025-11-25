@@ -9,6 +9,13 @@ const shortDesc = (text) => {
   return text.length > 80 ? text.slice(0, 80) + '...' : text;
 };
 
+const buildImageUrl = (url) => {
+  if (!url) return '';
+  return url.startsWith('http')
+    ? url
+    : `${BACKEND_URL.replace(/\/+$/, '')}${url}`;
+};
+
 export default function AdminProductsPage({ user }) {
   const [search, setSearch] = useState('');
   const [products, setProducts] = useState([]);
@@ -79,7 +86,8 @@ export default function AdminProductsPage({ user }) {
             <p className="page-eyebrow">Admin · Sản phẩm</p>
             <h2 className="page-title">Quản lý sản phẩm</h2>
             <p className="page-description">
-              Xem, tìm kiếm và chỉnh sửa danh sách sản phẩm đang bán trên hệ thống.
+              Xem, tìm kiếm và chỉnh sửa danh sách sản phẩm đang bán trên hệ
+              thống.
             </p>
           </div>
           <button
@@ -117,7 +125,7 @@ export default function AdminProductsPage({ user }) {
                 <div key={p.id} className="card card-product-admin">
                   {p.imageUrl && (
                     <img
-                      src={`${BACKEND_URL.replace(/\/+$/, '')}${p.imageUrl}`}
+                      src={buildImageUrl(p.imageUrl)}
                       alt={p.name}
                       className="product-card-img"
                     />
