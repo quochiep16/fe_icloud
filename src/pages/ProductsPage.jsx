@@ -1,4 +1,3 @@
-// src/pages/ProductsPage.jsx
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getProducts } from '../api/products';
@@ -10,11 +9,9 @@ const shortDesc = (text) => {
   return text.length > 80 ? text.slice(0, 80) + '...' : text;
 };
 
-const buildImageUrl = (url) => {
-  if (!url) return '';
-  return url.startsWith('http')
-    ? url
-    : `${BACKEND_URL.replace(/\/+$/, '')}${url}`;
+const buildImageUrl = (relativePath) => {
+  if (!relativePath) return '';
+  return `${BACKEND_URL.replace(/\/+$/, '')}${relativePath}`;
 };
 
 export default function ProductsPage({ user }) {
@@ -107,51 +104,55 @@ export default function ProductsPage({ user }) {
 
                 return (
                   <div key={p.id} className="card card-product">
-                    {p.imageUrl && (
-                      <img
-                        src={buildImageUrl(p.imageUrl)}
-                        alt={p.name}
-                        className="product-card-img"
-                      />
-                    )}
+                    {/* Nội dung phía trên */}
+                    <div className="card-product-main">
+                      {p.imageUrl && (
+                        <img
+                          src={buildImageUrl(p.imageUrl)}
+                          alt={p.name}
+                          className="product-card-img"
+                        />
+                      )}
 
-                    <h4 className="product-name">
-                      <Link
-                        to={`/products/${p.id}`}
-                        style={{ textDecoration: 'none', color: '#111827' }}
+                      <h4 className="product-name">
+                        <Link
+                          to={`/products/${p.id}`}
+                          style={{ textDecoration: 'none', color: '#111827' }}
+                        >
+                          {p.name}
+                        </Link>
+                      </h4>
+
+                      <p
+                        style={{
+                          fontSize: 13,
+                          color: '#4b5563',
+                          marginBottom: 4,
+                          minHeight: 36,
+                        }}
                       >
-                        {p.name}
-                      </Link>
-                    </h4>
+                        {shortDesc(p.description)}
+                      </p>
 
-                    <p
-                      style={{
-                        fontSize: 13,
-                        color: '#4b5563',
-                        marginBottom: 4,
-                        minHeight: 36,
-                      }}
-                    >
-                      {shortDesc(p.description)}
-                    </p>
+                      <p className="product-price">
+                        {Number(p.price).toLocaleString()} đ
+                      </p>
 
-                    <p className="product-price">
-                      {Number(p.price).toLocaleString()} đ
-                    </p>
+                      <p
+                        style={{
+                          fontSize: 13,
+                          color: outOfStock ? '#b91c1c' : '#4b5563',
+                        }}
+                      >
+                        {outOfStock
+                          ? 'Hết hàng'
+                          : `Còn ${p.stock} sản phẩm trong kho`}
+                      </p>
+                    </div>
 
-                    <p
-                      style={{
-                        fontSize: 13,
-                        color: outOfStock ? '#b91c1c' : '#4b5563',
-                      }}
-                    >
-                      {outOfStock
-                        ? 'Hết hàng'
-                        : `Còn ${p.stock} sản phẩm trong kho`}
-                    </p>
-
+                    {/* Nút đáy card */}
                     <button
-                      className="btn btn-primary mt-8"
+                      className="btn btn-primary card-product-button"
                       onClick={() => handleAddToCart(p)}
                       disabled={outOfStock}
                       style={

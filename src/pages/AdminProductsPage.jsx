@@ -9,11 +9,9 @@ const shortDesc = (text) => {
   return text.length > 80 ? text.slice(0, 80) + '...' : text;
 };
 
-const buildImageUrl = (url) => {
-  if (!url) return '';
-  return url.startsWith('http')
-    ? url
-    : `${BACKEND_URL.replace(/\/+$/, '')}${url}`;
+const buildImageUrl = (relativePath) => {
+  if (!relativePath) return '';
+  return `${BACKEND_URL.replace(/\/+$/, '')}${relativePath}`;
 };
 
 export default function AdminProductsPage({ user }) {
@@ -86,8 +84,7 @@ export default function AdminProductsPage({ user }) {
             <p className="page-eyebrow">Admin · Sản phẩm</p>
             <h2 className="page-title">Quản lý sản phẩm</h2>
             <p className="page-description">
-              Xem, tìm kiếm và chỉnh sửa danh sách sản phẩm đang bán trên hệ
-              thống.
+              Xem, tìm kiếm và chỉnh sửa danh sách sản phẩm đang bán trên hệ thống.
             </p>
           </div>
           <button
@@ -123,43 +120,47 @@ export default function AdminProductsPage({ user }) {
             <div className="product-grid mt-12">
               {products.map((p) => (
                 <div key={p.id} className="card card-product-admin">
-                  {p.imageUrl && (
-                    <img
-                      src={buildImageUrl(p.imageUrl)}
-                      alt={p.name}
-                      className="product-card-img"
-                    />
-                  )}
+                  {/* Nội dung phía trên */}
+                  <div className="card-product-main">
+                    {p.imageUrl && (
+                      <img
+                        src={buildImageUrl(p.imageUrl)}
+                        alt={p.name}
+                        className="product-card-img"
+                      />
+                    )}
 
-                  <h4 className="product-name">
-                    <Link
-                      to={`/products/${p.id}`}
-                      style={{ textDecoration: 'none', color: '#111827' }}
+                    <h4 className="product-name">
+                      <Link
+                        to={`/products/${p.id}`}
+                        style={{ textDecoration: 'none', color: '#111827' }}
+                      >
+                        {p.name}
+                      </Link>
+                    </h4>
+
+                    <p
+                      style={{
+                        fontSize: 13,
+                        color: '#4b5563',
+                        marginBottom: 4,
+                        minHeight: 36,
+                      }}
                     >
-                      {p.name}
-                    </Link>
-                  </h4>
+                      {shortDesc(p.description)}
+                    </p>
 
-                  <p
-                    style={{
-                      fontSize: 13,
-                      color: '#4b5563',
-                      marginBottom: 4,
-                      minHeight: 36,
-                    }}
-                  >
-                    {shortDesc(p.description)}
-                  </p>
+                    <p className="product-price">
+                      {Number(p.price).toLocaleString()} đ
+                    </p>
 
-                  <p className="product-price">
-                    {Number(p.price).toLocaleString()} đ
-                  </p>
+                    <p style={{ fontSize: 13, color: '#4b5563' }}>
+                      Còn {p.stock} sản phẩm trong kho
+                    </p>
+                  </div>
 
-                  <p style={{ fontSize: 13, color: '#4b5563' }}>
-                    Còn {p.stock} sản phẩm trong kho
-                  </p>
-
-                  <div className="flex gap-4 mt-8">
+                  {/* Hàng nút đáy card */}
+                  <div className="card-product-actions">
                     <button
                       className="btn btn-secondary"
                       onClick={() => handleEdit(p.id)}

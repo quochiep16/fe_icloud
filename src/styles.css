@@ -578,6 +578,26 @@ body {
   height: 100%;
 }
 
+/* Phần thân phía trên trong card (ảnh + text) */
+.card-product-main {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Nút ở đáy card product (FE) */
+.card-product-button {
+  margin-top: 12px;
+}
+
+/* Hàng nút Sửa/Xoá ở đáy card admin */
+.card-product-actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+}
+
+
 /* Form sections */
 
 .form-section {
