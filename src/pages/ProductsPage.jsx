@@ -9,9 +9,11 @@ const shortDesc = (text) => {
   return text.length > 80 ? text.slice(0, 80) + '...' : text;
 };
 
-const buildImageUrl = (relativePath) => {
-  if (!relativePath) return '';
-  return `${BACKEND_URL.replace(/\/+$/, '')}${relativePath}`;
+const buildImageUrl = (url) => {
+  if (!url) return '';
+  return url.startsWith('http')
+    ? url
+    : `${BACKEND_URL.replace(/\/+$/, '')}${url}`;
 };
 
 export default function ProductsPage({ user }) {
